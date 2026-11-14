@@ -234,7 +234,7 @@ function reveal(correct) {
   const iGuessed = role === 'guesser';
   if (correct) iGuessed ? score.me++ : score.friend++;
   $('banner').className = `banner ${correct ? 'win' : 'lose'}`;
-  $('bannerIcon').textContent = correct ? '✓' : '✕';
+  $('bannerRevo').src = `mascot/revo-${correct ? 'celebrate' : 'think'}.webp`;
   $('verdict').textContent = correct ? (iGuessed ? 'You cracked it!' : 'They cracked it!') : (iGuessed ? 'Not quite!' : 'They missed it!');
   $('verdictSub').textContent = correct ? '+1 point to the guesser' : 'No point this round.';
   $('nextHint').textContent = `Next round you ${iGuessed ? 'record' : 'guess'}.`;

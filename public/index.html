@@ -42,9 +42,12 @@
   <!-- Lobby -->
   <section id="lobby">
     <div class="hero">
-      <span class="chip green">2-player voice game</span>
-      <h1>Say it. Flip it. <span class="hl">Guess it.</span></h1>
-      <p class="lead">Your friend hears your word <b>backwards</b>, copies the gibberish, then flips their copy back to crack the word.</p>
+      <div class="hero-text">
+        <span class="chip green">2-player voice game</span>
+        <h1>Say it. Flip it. <span class="hl">Guess it.</span></h1>
+        <p class="lead">Your friend hears your word <b>backwards</b>, copies the gibberish, then flips their copy back to crack the word.</p>
+      </div>
+      <img class="revo revo-hero bob" src="mascot/revo-wave.webp" alt="Revo, the Revodio mascot, waving hello" width="468" height="364">
     </div>
     <div class="grid2">
       <div class="card">
@@ -73,6 +76,7 @@
   <!-- Waiting for player 2 -->
   <section id="waitRoom" hidden>
     <div class="card center narrow">
+      <img class="revo revo-md bob" src="mascot/revo-think.webp" alt="" width="440" height="455">
       <span class="chip yellow">Waiting for player 2</span>
       <h2>Send this code to your friend</h2>
       <div class="tiles" id="codeTiles"></div>
@@ -87,8 +91,13 @@
   <!-- Recorder: pick a category, then say the word -->
   <section id="recordStep" hidden>
     <div id="pickView">
-      <h2 class="title">Pick a category</h2>
-      <p class="muted">You'll get a random word from it to say out loud.</p>
+      <div class="pick-head">
+        <div>
+          <h2 class="title">Pick a category</h2>
+          <p class="muted">You'll get a random word from it to say out loud.</p>
+        </div>
+        <img class="revo revo-sm" src="mascot/revo-record.webp" alt="" width="416" height="364">
+      </div>
       <div class="cat-grid" id="cats"></div>
     </div>
     <div id="sayView" hidden>
@@ -157,7 +166,7 @@
   <!-- Waiting on the other player -->
   <section id="waiting" hidden>
     <div class="card center narrow wait-card">
-      <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <img class="revo revo-md bob" src="mascot/revo-think.webp" alt="" width="440" height="455">
       <h2 id="waitTitle"></h2>
       <p class="muted" id="waitText"></p>
     </div>
@@ -186,7 +195,7 @@
   <!-- Reveal for both players -->
   <section id="reveal" hidden>
     <div class="banner" id="banner">
-      <div class="banner-icon" id="bannerIcon"></div>
+      <img class="revo revo-banner" id="bannerRevo" src="mascot/revo-celebrate.webp" alt="" width="477" height="463">
       <div><h2 id="verdict"></h2><p id="verdictSub"></p></div>
     </div>
     <div class="grid2">

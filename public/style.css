@@ -95,7 +95,17 @@ section { display: flex; flex-direction: column; gap: 20px; animation: enter .25
 .join-row { display: flex; gap: 12px; }
 
 /* Lobby */
-.hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 24px 0 12px; }
+.hero { display: flex; align-items: center; justify-content: center; gap: 48px; padding: 8px 0 4px; }
+.hero-text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+
+/* Revo the mascot */
+.revo { display: block; height: auto; user-select: none; -webkit-user-drag: none; }
+.revo-hero { width: 230px; flex: none; }
+.revo-md { width: 120px; margin-bottom: 4px; }
+.revo-sm { width: 96px; flex: none; }
+.revo-banner { width: 92px; flex: none; margin: -12px 0; }
+.bob { animation: bob 2.4s ease-in-out infinite; }
+.pick-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
 .hero h1 { font-size: 56px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; }
 .hl { color: var(--green); }
 .lead { font-size: 19px; color: var(--ink2); font-weight: 500; max-width: 560px; }
@@ -165,21 +175,14 @@ section { display: flex; flex-direction: column; gap: 20px; animation: enter .25
 
 /* Waiting */
 .wait-card h2 { font-size: 24px; }
-.bars { display: flex; align-items: center; gap: 6px; height: 56px; margin-bottom: 4px; }
-.bars i { width: 10px; height: 18px; border-radius: 999px; background: var(--blue); animation: bar 1s ease-in-out infinite; }
-.bars i:nth-child(2) { animation-delay: .15s; } .bars i:nth-child(3) { animation-delay: .3s; }
-.bars i:nth-child(4) { animation-delay: .45s; } .bars i:nth-child(5) { animation-delay: .6s; }
 
 /* Judge + reveal */
 .verdict-row .btn { min-width: 200px; }
 .banner { display: flex; align-items: center; gap: 18px; border-radius: 24px; padding: 22px 26px; border: 2px solid; animation: pop .35s cubic-bezier(.3, 1.6, .5, 1); }
 .banner h2 { font-size: 30px; font-weight: 800; }
 .banner p { font-weight: 700; }
-.banner-icon { width: 60px; height: 60px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 30px; font-weight: 800; }
 .banner.win { background: var(--green-t); border-color: var(--green); color: var(--green-ink); }
-.banner.win .banner-icon { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
 .banner.lose { background: var(--red-t); border-color: var(--red); color: var(--red-ink); }
-.banner.lose .banner-icon { background: var(--red); box-shadow: 0 4px 0 var(--red-d); }
 .eyebrow .cat { margin-left: 6px; text-transform: none; letter-spacing: 0; }
 .score-card { flex-direction: row; gap: 16px; }
 .score-tile { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 16px; background: var(--bg); border: 2px solid var(--line); font-weight: 800; color: var(--ink2); }
@@ -195,7 +198,7 @@ section { display: flex; flex-direction: column; gap: 20px; animation: enter .25
 @keyframes pop { from { transform: scale(.9); opacity: 0; } }
 @keyframes fill { to { width: 100%; } }
 @keyframes ring { 0% { box-shadow: 0 6px 0 var(--red-d), 0 0 0 0 rgba(255, 75, 75, .45); } 100% { box-shadow: 0 6px 0 var(--red-d), 0 0 0 22px rgba(255, 75, 75, 0); } }
-@keyframes bar { 50% { height: 52px; } }
+@keyframes bob { 50% { transform: translateY(-8px); } }
 @keyframes throb { to { filter: brightness(1.12); } }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation-duration: 0s !important; animation-iteration-count: 1 !important; } .recording .meter i { animation: none; width: 100%; } }
 
@@ -219,6 +222,11 @@ section { display: flex; flex-direction: column; gap: 20px; animation: enter .25
   .grid2, .howto { grid-template-columns: 1fr; }
   .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .card { padding: 18px; }
+  .hero { flex-direction: column-reverse; gap: 8px; }
+  .hero-text { align-items: center; text-align: center; }
+  .revo-hero { width: 140px; }
+  .revo-sm { width: 72px; }
+  .revo-banner { width: 72px; }
   .hero h1 { font-size: 36px; }
   .lead { font-size: 16px; }
   .title { font-size: 24px; }
