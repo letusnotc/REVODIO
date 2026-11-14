@@ -1,4 +1,4 @@
-# REVODIO · Reverse Echo
+# REVODIO
 
 **Say it. Flip it. Guess it.**
 A 2-player voice game in the browser. Your friend hears your word **backwards**, copies the gibberish, then flips their copy back to crack the word.
