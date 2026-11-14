@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverse Echo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/" aria-label="Reverse Echo home">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 6 3 12l8 6zM21 6l-8 6 8 6z"/></svg></span>
+      <span class="brand-name">Reverse Echo</span>
+    </a>
+    <div class="game-info" id="gameInfo" hidden>
+      <div class="scores" aria-label="Score">
+        <span class="pill me">You <b class="scoreMe">0</b></span>
+        <span class="pill">Friend <b class="scoreFriend">0</b></span>
+      </div>
+      <span class="pill code">Room <b id="roomCode"></b></span>
+      <button class="btn ghost sm" id="leaveBtn">Leave</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="progress" id="steps" hidden>
+    <ol>
+      <li><b>1</b><span>Pick a word</span></li>
+      <li><b>2</b><span>Record it</span></li>
+      <li><b>3</b><span>Copy &amp; guess</span></li>
+      <li><b>4</b><span>Judge &amp; reveal</span></li>
+    </ol>
+    <span class="chip" id="turn"></span>
+  </div>
+
+  <!-- Lobby -->
+  <section id="lobby">
+    <div class="hero">
+      <span class="chip green">2-player voice game</span>
+      <h1>Say it. Flip it. <span class="hl">Guess it.</span></h1>
+      <p class="lead">Your friend hears your word <b>backwards</b>, copies the gibberish, then flips their copy back to crack the word.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-icon green"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+        <h2>Create a room</h2>
+        <p class="muted">Get a 4-letter code and send it to your friend.</p>
+        <button class="btn green lg full" id="createBtn">Create room</button>
+      </div>
+      <div class="card">
+        <div class="card-icon yellow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="5" height="7" rx="2"/><rect x="16" y="14" width="5" height="7" rx="2"/></svg></div>
+        <h2>Join a friend</h2>
+        <p class="muted">Type the code your friend sent you.</p>
+        <div class="join-row">
+          <input id="codeIn" class="code-input" placeholder="ABCD" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code">
+          <button class="btn yellow lg" id="joinBtn">Join</button>
+        </div>
+      </div>
+    </div>
+    <ol class="howto">
+      <li><b class="num green">1</b><div><h3>Say a word</h3><p>Pick a category, get a random word, record it.</p></div></li>
+      <li><b class="num blue">2</b><div><h3>Copy it backwards</h3><p>Your friend hears it reversed and mimics the sounds.</p></div></li>
+      <li><b class="num red">3</b><div><h3>Flip and guess</h3><p>Their copy gets reversed again. Can they hear the word?</p></div></li>
+    </ol>
+  </section>
+
+  <!-- Waiting for player 2 -->
+  <section id="waitRoom" hidden>
+    <div class="card center narrow">
+      <span class="chip yellow">Waiting for player 2</span>
+      <h2>Send this code to your friend</h2>
+      <div class="tiles" id="codeTiles"></div>
+      <div class="row center">
+        <button class="btn yellow" id="copyLink">Copy invite link</button>
+        <button class="btn ghost" id="copyCode">Copy code</button>
+      </div>
+      <p class="muted small">The game starts as soon as they join. Headphones help!</p>
+    </div>
+  </section>
+
+  <!-- Recorder: pick a category, then say the word -->
+  <section id="recordStep" hidden>
+    <div id="pickView">
+      <h2 class="title">Pick a category</h2>
+      <p class="muted">You'll get a random word from it to say out loud.</p>
+      <div class="cat-grid" id="cats"></div>
+    </div>
+    <div id="sayView" hidden>
+      <div class="grid2">
+        <div class="card center word-card">
+          <div class="row between full">
+            <span class="chip cat"></span>
+            <button class="btn ghost sm" id="changeCat">Change category</button>
+          </div>
+          <p class="eyebrow">Say this word</p>
+          <div id="wordOut" class="word"></div>
+          <button class="btn ghost" id="skipBtn">Skip word</button>
+        </div>
+        <div class="card center studio">
+          <p class="eyebrow">Record (max 6s)</p>
+          <button class="mic recBtn" data-slot="original" aria-label="Record">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          </button>
+          <div class="meter"><i></i></div>
+          <p class="micLabel" data-idle="Tap the mic and say the word"></p>
+          <button class="btn blue" data-play="original">Play it back</button>
+        </div>
+      </div>
+      <div class="actionbar">
+        <p class="muted">Your friend will hear it backwards.</p>
+        <button class="btn green lg" id="sendOriginal">Send to friend</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Guesser: listen backwards, copy, flip, guess -->
+  <section id="imitateStep" hidden>
+    <div class="row between head">
+      <h2 class="title">Crack the echo</h2>
+      <span class="chip cat"></span>
+    </div>
+    <div class="grid3">
+      <div class="card step-card" id="g1">
+        <div class="step-head"><b class="num blue">1</b><h3>Listen backwards</h3></div>
+        <p class="muted">Your friend's word, played in reverse. Replay it as often as you like.</p>
+        <button class="btn blue full" data-play="original" data-rev>Play backwards</button>
+      </div>
+      <div class="card step-card studio" id="g2">
+        <div class="step-head"><b class="num red">2</b><h3>Copy the gibberish</h3></div>
+        <button class="mic recBtn" data-slot="imitation" aria-label="Record">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        </button>
+        <div class="meter"><i></i></div>
+        <p class="micLabel" data-idle="Tap and make the same sounds"></p>
+      </div>
+      <div class="card step-card" id="g3">
+        <div class="step-head"><b class="num green">3</b><h3>Flip it back</h3></div>
+        <p class="muted">Your copy, reversed. It should sound like the real word.</p>
+        <button class="btn green full" data-play="imitation" data-rev>Play my copy flipped</button>
+      </div>
+    </div>
+    <div class="card guess-card">
+      <h3>What's the word?</h3>
+      <div class="join-row">
+        <input id="guessIn" class="text-input" placeholder="Type your guess" autocomplete="off" aria-label="Your guess">
+        <button class="btn green lg" id="sendGuess">Submit</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Waiting on the other player -->
+  <section id="waiting" hidden>
+    <div class="card center narrow wait-card">
+      <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h2 id="waitTitle"></h2>
+      <p class="muted" id="waitText"></p>
+    </div>
+  </section>
+
+  <!-- Recorder judges the guess -->
+  <section id="judgeStep" hidden>
+    <div class="row between head">
+      <h2 class="title">Did they get it?</h2>
+      <span class="chip cat"></span>
+    </div>
+    <div class="grid2">
+      <div class="card center"><p class="eyebrow">Your word</p><div class="word sm wordShow"></div></div>
+      <div class="card center"><p class="eyebrow">Their guess</p><div class="word sm blue-ink guessShow"></div></div>
+    </div>
+    <div class="card row between">
+      <p class="muted">Hear how close their copy got.</p>
+      <button class="btn blue" data-play="imitation" data-rev>Play their copy flipped</button>
+    </div>
+    <div class="row center verdict-row">
+      <button class="btn red lg" id="wrongBtn">Wrong</button>
+      <button class="btn green lg" id="rightBtn">Correct</button>
+    </div>
+  </section>
+
+  <!-- Reveal for both players -->
+  <section id="reveal" hidden>
+    <div class="banner" id="banner">
+      <div class="banner-icon" id="bannerIcon"></div>
+      <div><h2 id="verdict"></h2><p id="verdictSub"></p></div>
+    </div>
+    <div class="grid2">
+      <div class="card center">
+        <p class="eyebrow">The word <span class="cat"></span></p>
+        <div class="word sm wordShow"></div>
+        <div class="row center">
+          <button class="btn ghost sm" data-play="original">Original</button>
+          <button class="btn ghost sm" data-play="original" data-rev>Backwards</button>
+        </div>
+      </div>
+      <div class="card center">
+        <p class="eyebrow">The guess</p>
+        <div class="word sm blue-ink guessShow"></div>
+        <div class="row center">
+          <button class="btn ghost sm" data-play="imitation">Raw copy</button>
+          <button class="btn ghost sm" data-play="imitation" data-rev>Copy flipped</button>
+        </div>
+      </div>
+    </div>
+    <div class="card score-card">
+      <div class="score-tile me"><span>You</span><b class="scoreMe">0</b></div>
+      <div class="score-tile"><span>Friend</span><b class="scoreFriend">0</b></div>
+    </div>
+    <div class="actionbar">
+      <p class="muted" id="nextHint"></p>
+      <button class="btn green lg" id="nextBtn">Next round</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="words.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
