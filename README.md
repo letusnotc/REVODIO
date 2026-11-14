@@ -3,6 +3,8 @@
 **Say it. Flip it. Guess it.**
 A 2-player voice game in the browser. Your friend hears your word **backwards**, copies the gibberish, then flips their copy back to crack the word.
 
+**▶ Play now: [revodio.onrender.com](https://revodio.onrender.com)**
+
 ![Lobby](docs/screenshots/1-lobby.jpg)
 
 ---
@@ -80,7 +82,9 @@ npm test
 2. Build command: `npm install`. Start command: `npm start`. Instance type: **Free**.
 3. Deploy and share the `https://….onrender.com` link.
 
-Free Render apps sleep when idle, so the first visit can take about 30 seconds to wake up.
+The live site deploys automatically: every push to `main` triggers a new Render deploy.
+
+Free Render apps sleep when idle, so the first visit can take about 50 seconds to wake up.
 
 ## Adding words
 
