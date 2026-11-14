@@ -18,6 +18,50 @@ function newCode() {
   return code;
 }
 
+// --- Abuse limits ---
+// shortcut: limits live in this one process's memory; move them to a shared store if you ever run several instances.
+function limiter(max, windowMs) {
+  const hits = new Map();
+  setInterval(() => { const now = Date.now(); for (const [k, h] of hits) if (h.reset < now) hits.delete(k); }, windowMs).unref();
+  return (key) => {
+    const now = Date.now();
+    let h = hits.get(key);
+    if (!h || h.reset < now) hits.set(key, (h = { n: 0, reset: now + windowMs }));
+    return ++h.n <= max;
+  };
+}
+const joinLimit = limiter(10, 60_000); // per IP: makes guessing room codes impractical
+const relayLimit = limiter(30, 10_000); // per player: a round needs about 4 messages
+const MAX_CONNECTIONS_PER_IP = 10;
+const connections = new Map(); // ip -> open sockets
+// Render sits behind Cloudflare, which sets cf-connecting-ip to the real client address.
+const ipOf = (socket) => socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address;
+
+io.use((socket, next) => {
+  const ip = ipOf(socket);
+  const open = connections.get(ip) || 0;
+  if (open >= MAX_CONNECTIONS_PER_IP) return next(new Error('Too many open games from your network.'));
+  connections.set(ip, open + 1);
+  socket.on('disconnect', () => {
+    const left = connections.get(ip) - 1;
+    left > 0 ? connections.set(ip, left) : connections.delete(ip);
+  });
+  next();
+});
+
+// --- Message validation: only pass on known message types with sane fields ---
+const isText = (s, max) => typeof s === 'string' && s.length <= max;
+const isClip = (m) => Buffer.isBuffer(m.audio) && m.audio.length > 0 && m.audio.length % 4 === 0
+  && Number.isInteger(m.rate) && m.rate >= 8000 && m.rate <= 192000;
+function clean(m) {
+  if (!m || typeof m !== 'object') return null;
+  if (m.type === 'original' && isClip(m) && isText(m.category, 30)) return { type: m.type, audio: m.audio, rate: m.rate, category: m.category };
+  if (m.type === 'result' && isClip(m) && isText(m.guess, 100)) return { type: m.type, audio: m.audio, rate: m.rate, guess: m.guess };
+  if (m.type === 'verdict' && typeof m.correct === 'boolean' && isText(m.word, 100)) return { type: m.type, correct: m.correct, word: m.word };
+  if (m.type === 'next') return { type: 'next' };
+  return null;
+}
+
 io.on('connection', (socket) => {
   let room = null;
 
@@ -31,6 +75,7 @@ io.on('connection', (socket) => {
 
   socket.on('join', (code, ack) => {
     if (typeof ack !== 'function' || room) return;
+    if (!joinLimit(ipOf(socket))) return ack({ error: 'Too many tries. Wait a minute and try again.' });
     code = String(code || '').trim().toUpperCase();
     const players = rooms.get(code);
     if (!players) return ack({ error: 'No room with that code.' });
@@ -43,9 +88,11 @@ io.on('connection', (socket) => {
     socket.emit('start', 'guesser');
   });
 
-  // The server just passes game messages to the other player in the room.
+  // Pass game messages to the other player, dropping floods and malformed messages.
   socket.on('relay', (msg) => {
-    if (room) socket.to(room).emit('relay', msg);
+    if (!room || !relayLimit(socket.id)) return;
+    const safe = clean(msg);
+    if (safe) socket.to(room).emit('relay', safe);
   });
 
   socket.on('disconnect', () => {

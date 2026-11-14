@@ -89,6 +89,7 @@ socket.on('start', (r) => {
   history.replaceState(null, '', '/');
   newRound();
 });
+socket.on('connect_error', (e) => toast(e.message));
 socket.on('left', () => { toast('Your friend left the game.'); setTimeout(() => (location.href = '/'), 2500); });
 $('leaveBtn').onclick = () => (location.href = '/');
 
